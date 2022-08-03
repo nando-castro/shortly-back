@@ -6,8 +6,7 @@ export async function validateUser(req,res,next){
         const { name, email, password, confirmPassword } = req.body;
         const { error } = userSchema.validate({name,email,password,confirmPassword});
         if(error){
-            console.log(error)
-            return res.sendStatus(422);
+            return res.status(422).send(error.details);
         }
         if(password !== confirmPassword){
             return res.status(422).send('Senhas devem ser iguais');
