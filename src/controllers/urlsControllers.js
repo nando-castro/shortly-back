@@ -8,7 +8,7 @@ export async function createdShorthenUrl(req, res) {
     const { url } = req.body;
     const { token } = res.locals;
     const createdAt = daysjs().format("YYYY-MM-DD HH:mm:ss");
-    const numChars = 8;
+    const numChars = 9;
 
     const data = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -30,6 +30,21 @@ export async function createdShorthenUrl(req, res) {
     res.status(201).send(shortLink);
   } catch (error) {
     console.log(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function getUrls(req, res) {
+  try {
+    const { id } = req.params;
+    const { rows: link } = await connection.query(
+      `SELECT l."id", l."shortLink" as "shortUrl", l."link" as "url" FROM links l WHERE "id" = $1`,
+      [id]
+    );
+
+    res.status(200).send(link);
+  } catch (error) {
+    console.log(error)
     res.sendStatus(500);
   }
 }
