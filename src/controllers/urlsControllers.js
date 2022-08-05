@@ -56,11 +56,39 @@ export async function openShortLink(req, res) {
       [shortLink]
     );
     const [url] = link;
-    if(link.length === 0){
+    if (link.length === 0) {
       return res.sendStatus(404);
     }
-    await connection.query(`UPDATE "links" SET "views" = "views" + 1 WHERE id = $1`, [url.id]);
+    await connection.query(
+      `UPDATE "links" SET "views" = "views" + 1 WHERE id = $1`,
+      [url.id]
+    );
     res.redirect(url.link);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function deleteUrl(req, res) {
+  try {
+    const { id } = req.params;
+    const { token } = res.locals;
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const { rows: link } = await connection.query(
+      `SELECT * FROM "links" WHERE "id" = $1`,
+      [id]
+    );
+    const [url] = link;
+    if (link.length === 0) {
+      return res.sendStatus(404);
+    }
+
+    if(data.id === url.userId){
+      await connection.query(`DELETE FROM "links" WHERE id = $1`, [id]);
+      return res.sendStatus(200);
+    }
+    res.sendStatus(401);
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
