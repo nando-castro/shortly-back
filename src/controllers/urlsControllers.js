@@ -41,10 +41,28 @@ export async function getUrls(req, res) {
       `SELECT l."id", l."shortLink" as "shortUrl", l."link" as "url" FROM links l WHERE "id" = $1`,
       [id]
     );
-
     res.status(200).send(link);
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function openShortLink(req, res) {
+  try {
+    const { shortLink } = req.params;
+    const { rows: link } = await connection.query(
+      `SELECT * FROM "links" WHERE "shortLink" = $1`,
+      [shortLink]
+    );
+    const [url] = link;
+    if(link.length === 0){
+      return res.sendStatus(404);
+    }
+    await connection.query(`UPDATE "links" SET "views" = "views" + 1 WHERE id = $1`, [url.id]);
+    res.redirect(url.link);
+  } catch (error) {
+    console.log(error);
     res.sendStatus(500);
   }
 }

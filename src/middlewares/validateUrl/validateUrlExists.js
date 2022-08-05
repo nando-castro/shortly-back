@@ -6,7 +6,6 @@ export async function validateUrlExists(req, res, next) {
     if(url.length === 0){
         return res.sendStatus(404);
     }
-    res.locals.id = id;
     next();
   } catch (error) {
     console.log(error);
