@@ -76,7 +76,6 @@ export async function getUrlsUser(req, res) {
       `SELECT l.id, l."shortLink" AS "shortUrl", l."link" AS "url", l."views" AS "visitCount" FROM "links" l WHERE "userId" = $1`,
       [data.id]
     );
-    console.log(users);
     const [user] = users;
 
     res
