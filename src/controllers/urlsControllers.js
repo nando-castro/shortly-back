@@ -12,15 +12,6 @@ export async function createdShorthenUrl(req, res) {
 
     const data = jwt.verify(token, process.env.JWT_SECRET);
 
-    const session = await connection.query(
-      `SELECT * FROM "sessions" WHERE "token" = $1`,
-      [token]
-    );
-
-    if (session.rows.length === 0) {
-      return res.sendStatus(401);
-    }
-
     const shortLink = nanoid(numChars);
 
     await connection.query(
@@ -84,7 +75,7 @@ export async function deleteUrl(req, res) {
       return res.sendStatus(404);
     }
 
-    if(data.id === url.userId){
+    if (data.id === url.userId) {
       await connection.query(`DELETE FROM "links" WHERE id = $1`, [id]);
       return res.sendStatus(204);
     }

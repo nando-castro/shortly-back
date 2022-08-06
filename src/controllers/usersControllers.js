@@ -24,8 +24,6 @@ export async function loginUser(req, res) {
     const { user } = res.locals;
     const createdAt = daysjs().format("YYYY-MM-DD HH:mm:ss");
 
-    console.log(user);
-
     if (user) {
       const data = {
         id: user.id,
@@ -73,7 +71,7 @@ export async function getUrlsUser(req, res) {
       [data.id]
     );
     const { rows: links } = await connection.query(
-      `SELECT l.id, l."shortLink" AS "shortUrl", l."link" AS "url", l."views" AS "visitCount" FROM "links" l WHERE "userId" = $1`,
+      `SELECT l.id, l."shortLink" AS "shortUrl", l."link" AS "url", l."views" AS "visitCount" FROM "links" l WHERE "userId" = $1 ORDER BY l."id" ASC`,
       [data.id]
     );
     const [user] = users;
