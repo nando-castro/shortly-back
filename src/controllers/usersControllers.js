@@ -21,7 +21,7 @@ export async function registerUser(req, res) {
 
 export async function loginUser(req, res) {
   try {
-    const {user} = res.locals;
+    const { user } = res.locals;
     const createdAt = daysjs().format("YYYY-MM-DD HH:mm:ss");
 
     console.log(user);
@@ -54,6 +54,39 @@ export async function loginUser(req, res) {
       );
       res.status(200).send(token);
     }
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function getUrlsUser(req, res) {
+  try {
+    const { token } = res.locals;
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const { rows: users } = await connection.query(
+      `SELECT u.id, u.name, SUM(l."views") as "visitCount"
+      FROM users u
+      JOIN links l ON l."userId" = u.id
+      WHERE u.id = $1
+      GROUP BY u.id`,
+      [data.id]
+    );
+    const { rows: links } = await connection.query(
+      `SELECT l.id, l."shortLink" AS "shortUrl", l."link" AS "url", l."views" AS "visitCount" FROM "links" l WHERE "userId" = $1`,
+      [data.id]
+    );
+    console.log(users);
+    const [user] = users;
+
+    res
+      .status(200)
+      .send({
+        id: user.id,
+        name: user.name,
+        visitCount: user.visitCount || 0,
+        shortenedUrls: links,
+      });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

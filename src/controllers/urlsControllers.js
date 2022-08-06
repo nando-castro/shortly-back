@@ -86,7 +86,7 @@ export async function deleteUrl(req, res) {
 
     if(data.id === url.userId){
       await connection.query(`DELETE FROM "links" WHERE id = $1`, [id]);
-      return res.sendStatus(200);
+      return res.sendStatus(204);
     }
     res.sendStatus(401);
   } catch (error) {
