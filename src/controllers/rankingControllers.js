@@ -8,7 +8,7 @@ export async function getRanking(req, res) {
     LEFT JOIN "links" l
     ON u.id = l."userId"
     GROUP BY u.id
-    ORDER BY "visitCount" DESC
+    ORDER BY "visitCount" DESC, "linksCount" DESC, u.id ASC
     LIMIT 10`);
 
     //const [ranking] = users;
