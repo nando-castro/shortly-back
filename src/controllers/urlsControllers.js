@@ -21,7 +21,7 @@ export async function createdShorthenUrl(req, res) {
     res.status(201).send(shortLink);
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(401).send('token inválido ou expirado');
   }
 }
 
