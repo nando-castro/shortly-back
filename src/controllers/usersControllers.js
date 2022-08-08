@@ -44,13 +44,13 @@ export async function loginUser(req, res) {
           `UPDATE sessions SET token = $1 WHERE "userId" = $2`,
           [token, user.id]
         );
-        return res.status(200).send(token);
+        return res.status(200).send({token});
       }
       await connection.query(
         `INSERT INTO sessions ("token", "userId", "createdAt") VALUES($1, $2, $3)`,
         [token, user.id, createdAt]
       );
-      res.status(200).send(token);
+      res.status(200).send({token});
     }
   } catch (error) {
     console.log(error);
